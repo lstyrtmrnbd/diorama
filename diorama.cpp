@@ -39,17 +39,26 @@ int main() {
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
   const string vertSrc = "in vec3 position;"\
+                         "varying vec2 texCoord;"\
                          "void main() {"\
-                         " gl_Position = vec4(position.x,position.y,position.z,1.0);"\
+                         "  gl_Position = vec4(position.x,position.y,position.z,1.0);"\
                          "}";
 
-  const string fragSrc = "void main() {"\
-                         "gl_FragColor = vec4(0.0,1.0,0.5,1.0);"\
+  const string fragSrc = "varying vec2 texCoord;"\
+                         "in sampler2D texture;"\
+                         "void main() {"\
+                         "  gl_FragColor = vec4(0.0,1.0,0.5,1.0);"\
                          "}";
 
   sf::Shader defaultShader;
 
-  if (!defaultShader.loadFromMemory(vertSrc, fragSrc)) std::cout << "shader fail\n";
+  if (!defaultShader.loadFromMemory(vertSrc, fragSrc)) std::cout << "#####Default shader failed\n";
+
+  sf::Image defaultImage;
+  defaultImage.loadFromFile("poster0.jpg");
+
+  sf::Texture defaultTexture;
+  defaultTexture.loadFromImage(defaultImage);
   
   bool running = true;
   while (running) {
@@ -74,8 +83,16 @@ int main() {
     }
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // shader uniforms set with
+    //defaultShader.setUniform("uName", 1.0f); // overloads for sfml and sfml/glsl types
+
+    // overloaded for sf::Texture& as well
+    //shader.setUniform("texture", texture);
     
     sf::Shader::bind(&defaultShader);
+
+    sf::Texture::bind(&defaultTexture);
 
     glEnableVertexAttribArray(0);   
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
