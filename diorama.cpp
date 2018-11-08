@@ -5,6 +5,7 @@
 #include <GL/glew.h>
 
 #include <SFML/Window.hpp>
+#include <SFML/Graphics.hpp>
 
 #include <glm/glm.hpp>
 
@@ -35,13 +36,13 @@ int main() {
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-  const string vertSrc = "layout (location = 0) in vec3 position"\
+  const string vertSrc = "in vec3 position;"\
                          "void main() {"\
-                         " gl_Position = vec4(position.x,position.y,position.z,1.0)"\
+                         " gl_Position = vec4(position.x,position.y,position.z,1.0);"\
                          "}";
 
   const string fragSrc = "void main() {"\
-                         "gl_FragColor = (0.0,1.0,0.5,1.0)"\
+                         "gl_FragColor = vec4(0.0,1.0,0.5,1.0);"\
                          "}";
 
   sf::Shader defaultShader;
@@ -73,9 +74,13 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     glEnableVertexAttribArray(0);
-    // draw...
+
+    sf::Shader::bind(&defaultShader);
+    
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0); //tell pipeline how to interpret data in the buffer
+
+
     glDrawArrays(GL_TRIANGLES, 0 , 3);
 
     glDisableVertexAttribArray(0);
