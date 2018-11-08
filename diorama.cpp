@@ -13,8 +13,10 @@ int main() {
 
   using glm::vec3;
   using std::string;
+
+  sf::ContextSettings settings(24, 0, 0, 4, 5); //depth, stencil, AA, major, minor
   
-  sf::Window window(sf::VideoMode(800, 600), "OpenGL", sf::Style::Default, sf::ContextSettings(32));
+  sf::Window window(sf::VideoMode(800, 600), "Diorama", sf::Style::Default, settings);
   window.setVerticalSyncEnabled(true);
 
   // activate the window
@@ -73,13 +75,11 @@ int main() {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
-    glEnableVertexAttribArray(0);
-
     sf::Shader::bind(&defaultShader);
-    
+
+    glEnableVertexAttribArray(0);   
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0); //tell pipeline how to interpret data in the buffer
-
 
     glDrawArrays(GL_TRIANGLES, 0 , 3);
 
