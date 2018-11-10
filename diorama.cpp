@@ -69,7 +69,7 @@ int main() {
                          "void main() {"\
                          "  vec3 tex = texture2D(texture0, texCoord).rgb;"\
                          "  vec3 color = vec3(0.0, 1.0, 0.5);"\
-                         "  gl_FragColor = vec4(color / tex,1.0);"\
+                         "  gl_FragColor = vec4(color * tex, 1.0);"\
                          "}";
 
   sf::Shader defaultShader;
@@ -123,7 +123,11 @@ int main() {
     
     sf::Shader::bind(&defaultShader);
 
+    glActiveTexture(GL_TEXTURE0);
+    //glUniform1i("texture0", /*GL_TEXTURE*/0);
     sf::Texture::bind(&defaultTexture);
+
+    defaultShader.setUniform("texture0", defaultTexture);
     
     glEnableVertexAttribArray(positionLoc);
     glEnableVertexAttribArray(texCoordLoc);
