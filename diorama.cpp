@@ -70,10 +70,12 @@ int main() {
   const string fragSrc = "#version 330\n"\
                          "in vec2 texCoordV;"\
                          "uniform sampler2D texture0;"\
+                         "out vec4 fragColor;"
                          "void main() {"\
-                         "  vec3 tex = texture2D(texture0, texCoordV).rgb;"\
+                         "  vec2 flipCoords = vec2(texCoordV.x, 1.0 - texCoordV.y);"\
+                         "  vec3 tex = texture2D(texture0, flipCoords).rgb;"\
                          "  vec3 color = vec3(0.0, 1.0, 0.5);"\
-                         "  gl_FragColor = vec4(tex, 1.0);"\
+                         "  fragColor = vec4(tex, 1.0);"\
                          "}";
 
   sf::Shader defaultShader;
@@ -132,24 +134,15 @@ int main() {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // shader uniforms set with
-    //defaultShader.setUniform("uName", 1.0f); // overloads for sfml and sfml/glsl types
-
-    // overloaded for sf::Texture& as well
-    //shader.setUniform("texture", texture);
-    
     sf::Shader::bind(&defaultShader);
 
     glActiveTexture(GL_TEXTURE0);
-    //glUniform1i("texture0", /*GL_TEXTURE*/0);
     sf::Texture::bind(&defaultTexture);
 
     defaultShader.setUniform("texture0", defaultTexture);
     
     glDrawArrays(GL_TRIANGLES, 0 , 6);
-
-    //glDisableVertexAttribArray(positionLoc);
-    
+  
     window.display(); // end the current frame (internally swaps the front and back buffers)
   }
 
