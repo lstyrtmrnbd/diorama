@@ -7,10 +7,14 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
 
 using glm::vec2;
 using glm::vec3;
+using glm::mat4;
 using std::string;
 
 int main() {
@@ -29,6 +33,7 @@ int main() {
   glClearColor(0.5f,0.5f,0.5f,1.0f);
   glEnable(GL_DEPTH_TEST);
 
+  /// BUFFERS
   // By default, counterclockwise polygons are taken to be front-facing
   vec3 vertices[6];
   vertices[0] = vec3(-0.5f, 1.0f,0.0f);
@@ -58,14 +63,13 @@ int main() {
   glBindBuffer(GL_ARRAY_BUFFER, texCoordBuffer);
   glBufferData(GL_ARRAY_BUFFER, sizeof(texCoords), texCoords, GL_STATIC_DRAW);
 
-  
+  /// SHADER
   const string vertFile = "src/default.vert";
   const string fragFile = "src/default.frag";
   
   sf::Shader defaultShader;
 
   if (!defaultShader.loadFromFile(vertFile, fragFile)) {
-
     std::cout << "#####Default shader failed\n";
   }
   
@@ -74,7 +78,7 @@ int main() {
   GLint positionLoc = glGetAttribLocation(shaderHandle, "position");
   GLint texCoordLoc = glGetAttribLocation(shaderHandle, "texCoord");
 
-  
+  /// ATTRIBUTES
   GLuint vao;
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
@@ -88,7 +92,7 @@ int main() {
   glBindBuffer(GL_ARRAY_BUFFER, texCoordBuffer);
   glVertexAttribPointer(texCoordLoc, 2, GL_FLOAT, GL_TRUE, 0, 0);
   
-  
+  /// TEXTURE
   sf::Image defaultImage;
   defaultImage.loadFromFile("poster0.jpg");
 
@@ -97,7 +101,20 @@ int main() {
 
   GLuint texHandle = defaultTexture.getNativeHandle();
 
+  /// MATRICES
+  mat4 translation(1.0f);
+  mat4 rotation(1.0f);
+  mat4 scale = glm::scale(mat4(1.0f), vec3(0.5f,0.5f,0.5f));
+
+  mat4 model = translation * rotation * scale;
+  mat4 view(1.0f);
+  mat4 projection(1.0f);
+
+  GLuint modelLoc = glGetUniformLocation(shaderHandle, "model");
+  GLuint viewLoc = glGetUniformLocation(shaderHandle, "view");
+  GLuint projectionLoc = glGetUniformLocation(shaderHandle, "projection");
   
+  /// LOOP
   bool running = true;
   while (running) {
     
@@ -128,6 +145,9 @@ int main() {
     sf::Texture::bind(&defaultTexture);
 
     defaultShader.setUniform("texture0", defaultTexture);
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &model[0][0]);
+    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
+    glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &projection[0][0]);
     
     glDrawArrays(GL_TRIANGLES, 0 , 6);
   
