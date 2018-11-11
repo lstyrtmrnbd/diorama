@@ -58,18 +58,22 @@ int main() {
   glBindBuffer(GL_ARRAY_BUFFER, texCoordBuffer);
   glBufferData(GL_ARRAY_BUFFER, sizeof(texCoords), texCoords, GL_STATIC_DRAW);
   
-  const string vertSrc = "in vec3 position;"\
-                         "varying vec2 texCoord;"\
+  const string vertSrc = "#version 330\n"\
+                         "in vec3 position;"\
+                         "in vec2 texCoord;"\
+                         "out vec2 texCoordV;"\
                          "void main() {"\
+                         "  texCoordV = texCoord;"\
                          "  gl_Position = vec4(position.x,position.y,position.z,1.0);"\
                          "}";
 
-  const string fragSrc = "varying vec2 texCoord;"\
+  const string fragSrc = "#version 330\n"\
+                         "in vec2 texCoordV;"\
                          "uniform sampler2D texture0;"\
                          "void main() {"\
-                         "  vec3 tex = texture2D(texture0, texCoord).rgb;"\
+                         "  vec3 tex = texture2D(texture0, texCoordV).rgb;"\
                          "  vec3 color = vec3(0.0, 1.0, 0.5);"\
-                         "  gl_FragColor = vec4(color * tex, 1.0);"\
+                         "  gl_FragColor = vec4(tex, 1.0);"\
                          "}";
 
   sf::Shader defaultShader;
@@ -81,6 +85,19 @@ int main() {
   GLint positionLoc = glGetAttribLocation(shaderHandle, "position");
   GLint texCoordLoc = glGetAttribLocation(shaderHandle, "texCoord");
 
+  GLuint vao;
+  glGenVertexArrays(1, &vao);
+  glBindVertexArray(vao);
+  
+  glEnableVertexAttribArray(positionLoc);
+  glEnableVertexAttribArray(texCoordLoc);
+    
+  glBindBuffer(GL_ARRAY_BUFFER, VBO);
+  glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+  
+  glBindBuffer(GL_ARRAY_BUFFER, texCoordBuffer);
+  glVertexAttribPointer(texCoordLoc, 2, GL_FLOAT, GL_TRUE, 0, 0);
+  
   
   sf::Image defaultImage;
   defaultImage.loadFromFile("poster0.jpg");
@@ -129,15 +146,6 @@ int main() {
 
     defaultShader.setUniform("texture0", defaultTexture);
     
-    glEnableVertexAttribArray(positionLoc);
-    glEnableVertexAttribArray(texCoordLoc);
-    
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, texCoordBuffer);
-    glVertexAttribPointer(texCoordLoc, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
     glDrawArrays(GL_TRIANGLES, 0 , 6);
 
     //glDisableVertexAttribArray(positionLoc);
