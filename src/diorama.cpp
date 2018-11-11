@@ -57,36 +57,24 @@ int main() {
   glGenBuffers(1, &texCoordBuffer);
   glBindBuffer(GL_ARRAY_BUFFER, texCoordBuffer);
   glBufferData(GL_ARRAY_BUFFER, sizeof(texCoords), texCoords, GL_STATIC_DRAW);
+
   
-  const string vertSrc = "#version 330\n"\
-                         "in vec3 position;"\
-                         "in vec2 texCoord;"\
-                         "out vec2 texCoordV;"\
-                         "void main() {"\
-                         "  texCoordV = texCoord;"\
-                         "  gl_Position = vec4(position.x,position.y,position.z,1.0);"\
-                         "}";
-
-  const string fragSrc = "#version 330\n"\
-                         "in vec2 texCoordV;"\
-                         "uniform sampler2D texture0;"\
-                         "out vec4 fragColor;"
-                         "void main() {"\
-                         "  vec2 flipCoords = vec2(texCoordV.x, 1.0 - texCoordV.y);"\
-                         "  vec3 tex = texture2D(texture0, flipCoords).rgb;"\
-                         "  vec3 color = vec3(0.0, 1.0, 0.5);"\
-                         "  fragColor = vec4(tex, 1.0);"\
-                         "}";
-
+  const string vertFile = "src/default.vert";
+  const string fragFile = "src/default.frag";
+  
   sf::Shader defaultShader;
 
-  if (!defaultShader.loadFromMemory(vertSrc, fragSrc)) std::cout << "#####Default shader failed\n";
+  if (!defaultShader.loadFromFile(vertFile, fragFile)) {
 
+    std::cout << "#####Default shader failed\n";
+  }
+  
   GLuint shaderHandle = defaultShader.getNativeHandle();
 
   GLint positionLoc = glGetAttribLocation(shaderHandle, "position");
   GLint texCoordLoc = glGetAttribLocation(shaderHandle, "texCoord");
 
+  
   GLuint vao;
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);

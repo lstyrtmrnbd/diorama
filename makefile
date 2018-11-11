@@ -7,4 +7,4 @@ LINK = -lstdc++ -lsfml-window -lsfml-graphics -lsfml-system
 WINLINK = -lglew32 -lopengl32
 
 all:
-	$(CXX) $(FLAGS) -o diorama.bin diorama.cpp $(LINK) $(WINLINK) 
+	$(CXX) $(FLAGS) -o diorama.bin src/diorama.cpp $(LINK) $(WINLINK) 
