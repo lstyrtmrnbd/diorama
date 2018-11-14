@@ -1,3 +1,8 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <GL/glew.h>
+#include <SFML/Graphics.hpp>
 
 using std::string;
 using std::vector;
@@ -5,7 +10,7 @@ using sf::Shader;
 
 struct Attribute {
 
-  string name;
+  string name;         // as it appears in shader
   int size;            // element count
   GLenum type;         
   GLboolean normalized;
@@ -30,8 +35,8 @@ Batch::Batch(string vertFilename, string fragFilename, vector<Attribute> &attrs)
   : shader() {
 
   if (!shader.loadFromFile(vertFilename, fragFilename)) {
-    cout << "Batch failed to load shader " << vertFilename
-         << ", " << fragFilename << endl;
+    std::cout << "Batch failed to load shader " << vertFilename
+              << ", " << fragFilename << std::endl;
   }
 
   this->shaderHandle = shader.getNativeHandle();
@@ -42,30 +47,32 @@ Batch::Batch(string vertFilename, string fragFilename, vector<Attribute> &attrs)
   glBindVertexArray(this->VAO);
   glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
 
-  int stride = 0;
+  unsigned int stride = 0;
 
-  for (auto& attr : attrs) {
+  for (auto const& attr : attrs) {
 
     stride += attr.size * sizeofGLType(attr.type);
   }
 
-  int offset = 0;
+  unsigned long offset = 0;
   
-  for (auto& attr : attrs) {
+  for (auto const& attr : attrs) {
 
-    GLint loc = glGetAttribLocation(shaderHandle, attr.name);
+    GLint loc = glGetAttribLocation(shaderHandle, attr.name.c_str());
     glEnableVertexAttribArray(loc);
 
-    glVertexAttribPointer(loc, attr.size, attr.type, stride, (GLvoid*)offset);
+    glVertexAttribPointer(loc, attr.size, attr.type,
+                          attr.normalized, stride, (GLvoid*)offset);
 
     offset += attr.size * sizeofGLType(attr.type);
   }
 
+  // clear GL state bindings
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 }
 
-Batch::sizeofGLType(GLenum type) {
+int Batch::sizeofGLType(GLenum type) {
   
   switch (type) {
 
@@ -96,4 +103,6 @@ Batch::sizeofGLType(GLenum type) {
     case GL_DOUBLE:
       return sizeof(GLdouble);
   }
+  // default
+  return sizeof(GLfloat);
 }
