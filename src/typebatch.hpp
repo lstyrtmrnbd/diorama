@@ -4,12 +4,14 @@
 #include <iostream>
 #include <string>
 #include <tuple>
+#include <type_traits>
 #include <vector>
 
 #include <SFML/Graphics.hpp>
 
 #include <GL/glew.h>
 
+#include "attribute.hpp"
 #include "gltypes.hpp"
 /**
  * The important calls are: 
@@ -33,17 +35,6 @@ inline typename std::enable_if<I < sizeof...(Tp)>::type
     f(std::get<I>(t));
     for_each<I + 1, FuncT, Tp...>(t, f);
   }
-  
-template <typename T, int N>
-struct Attribute {
-
-  Attribute(string handle, bool normal) : name(handle), normalized(normal) {};
-  string name;
-  static const int size = N;
-  typedef T type;
-  GLboolean normalized;
-    
-};
 
 template <typename... Attrs>
 class Batch {
@@ -81,9 +72,9 @@ public:
     unsigned int stride = 0;
 
     auto countStride =
-      [&stride](const auto attr) {
+      [&stride](const auto& attr) {
 
-        typedef typename decltype(attr)::type aType;
+        typedef typename std::decay<decltype(attr)>::type::type aType;
 
         stride += attr.size * sizeof(aType);
       };
@@ -93,9 +84,9 @@ public:
     unsigned long offset = 0;
 
     auto vertexAttribPointer =
-      [&offset, stride, this](const auto attr) {
+      [&offset, stride, this](const auto& attr) {
 
-        typedef typename decltype(attr)::type aType;
+        typedef typename std::decay<decltype(attr)>::type::type aType;
         
         GLint loc = glGetAttribLocation(shaderHandle, attr.name.c_str());
         glEnableVertexAttribArray(loc);
@@ -111,10 +102,13 @@ public:
 
     // clear GL state bindings
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0); 
+    glBindVertexArray(0);
   }
   
-  void addModel(vector<typename Attrs::type>&...){};
+  void addModel(vector<typename Attrs::type>&...) {};
+
+  // should be vector<vecX>& per attrib
+  void addModel(typename vecType<Attrs>::type const&... args) {};
 
 };
 

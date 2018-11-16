@@ -68,9 +68,9 @@ int main() {
   Attribute<GLfloat, 3> position {"position", false};
   Attribute<GLfloat, 2> texCoord {"texCoords", true};
 
-  Batch<Attribute<float, 3>,
-        Attribute<float, 2>> batch {"src/default.vert", "src/default.frag",
-                                    position, texCoord};
+  Batch<Attribute<GLfloat, 3>,
+        Attribute<GLfloat, 2>> batch {"src/default.vert", "src/default.frag",
+                                      position, texCoord};
   
   /// SHADER
   const string vertFile = "src/default.vert";
