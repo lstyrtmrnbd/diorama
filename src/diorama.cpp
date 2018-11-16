@@ -12,6 +12,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include "typebatch.hpp"
+
 using glm::vec2;
 using glm::vec3;
 using glm::mat4;
@@ -63,6 +65,13 @@ int main() {
   glBindBuffer(GL_ARRAY_BUFFER, texCoordBuffer);
   glBufferData(GL_ARRAY_BUFFER, sizeof(texCoords), texCoords, GL_STATIC_DRAW);
 
+  Attribute<GLfloat, 3> position {"position", false};
+  Attribute<GLfloat, 2> texCoord {"texCoords", true};
+
+  Batch<Attribute<float, 3>,
+        Attribute<float, 2>> batch {"src/default.vert", "src/default.frag",
+                                    position, texCoord};
+  
   /// SHADER
   const string vertFile = "src/default.vert";
   const string fragFile = "src/default.frag";
