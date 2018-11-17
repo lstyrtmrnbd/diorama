@@ -45,7 +45,7 @@ int main() {
   vertices[3] = vec3( 0.5f,-1.0f,0.0f);
   vertices[4] = vec3( 0.5f, 1.0f,0.0f);
   vertices[5] = vec3(-0.5f, 1.0f,0.0f);
-  
+
   GLuint VBO;
   glGenBuffers(1, &VBO);
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -71,6 +71,24 @@ int main() {
   Batch<Attribute<GLfloat, 3>,
         Attribute<GLfloat, 2>> batch {"src/default.vert", "src/default.frag",
                                       position, texCoord};
+  
+  vector<vec3> vverts = {{-1.0f, 1.0f, 0.0f },
+                         {-1.0f,-1.0f, 0.0f },
+                         { 1.0f,-1.0f, 0.0f },
+
+                         { 1.0f,-1.0f, 0.0f },
+                         { 1.0f, 1.0f, 0.0f },
+                         {-1.0f, 1.0f, 0.0f }};
+
+  vector<vec2> vtexs = {{ 0.0f, 1.0f },
+                        { 0.0f, 0.0f },
+                        { 1.0f, 0.0f },
+
+                        { 1.0f, 0.0f },
+                        { 1.0f, 1.0f },
+                        { 0.0f, 1.0f }};
+  
+  batch.addModel(vverts, vtexs);
   
   /// SHADER
   const string vertFile = "src/default.vert";

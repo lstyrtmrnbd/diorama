@@ -12,7 +12,9 @@
 #include <GL/glew.h>
 
 #include "attribute.hpp"
+#include "utility.hpp"
 #include "gltypes.hpp"
+
 /**
  * The important calls are: 
  * glVertexAttribPointer(location, size, typeEnum, stride, offset)
@@ -20,21 +22,13 @@
  * glBufferData(GL_ARRAY_BUFFER, sizeof, data, GL_DYNAMIC_DRAW) 
  */
 
+/**
+ * Elements are interleaved in VBO
+ * Benchmark later: make batch parent or interface,
+ *   give interleaved and non-interleaved implementations 
+ */
+
 using std::tuple, std::string, std::vector, sf::Shader;
-
-// TUPLE FOR_EACH
-template <size_t I = 0, typename FuncT, typename... Tp>
-inline typename std::enable_if<I == sizeof...(Tp)>::type
-  for_each(tuple<Tp...> &, FuncT)
-  { }
-
-template <size_t I = 0, typename FuncT, typename... Tp>
-inline typename std::enable_if<I < sizeof...(Tp)>::type
-  for_each(tuple<Tp...>& t, FuncT f) {
-  
-    f(std::get<I>(t));
-    for_each<I + 1, FuncT, Tp...>(t, f);
-  }
 
 template <typename... Attrs>
 class Batch {
@@ -48,7 +42,7 @@ private:
   template <typename FuncT>
   void forAttr(FuncT func) {
     
-    for_each(attributes, func);
+    forTuple(attributes, func);
   }
 
 public:
@@ -104,11 +98,19 @@ public:
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
   }
-  
-  void addModel(vector<typename Attrs::type>&...) {};
 
-  // should be vector<vecX>& per attrib
-  void addModel(typename vecType<Attrs>::type const&... args) {};
+  // vector<glm::vecX>& per attribute
+  void addModel(vector<typename vecType<Attrs>::type> const&... args) {
+
+    auto vecs = std::make_tuple(args...);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    
+    // zip arg vector of vecs into single vector
+    // glBufferData on that vectors.data
+    
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+  }
 
 };
 
