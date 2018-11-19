@@ -17,9 +17,9 @@
 
 /**
  * The important calls are: 
- * glVertexAttribPointer(location, size, typeEnum, stride, offset)
- * and:
- * glBufferData(GL_ARRAY_BUFFER, sizeof, data, GL_DYNAMIC_DRAW) 
+ * - glVertexAttribPointer(location, size, typeEnum, stride, offset)
+ * - glBufferData(GL_ARRAY_BUFFER, sizeof, data, GL_DYNAMIC_DRAW) 
+ * - glBufferSubData(GL_ARRAY_BUFFER, offset, size, const GLvoid * data)
  */
 
 /**
@@ -100,18 +100,38 @@ public:
   }
 
   // vector<glm::vecX>& per attribute
+  // need to save and supply offset
   void addModel(vector<typename vecType<Attrs>::type> const&... args) {
 
     auto vecs = std::make_tuple(args...);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    size_t size = 0;
     
-    // zip arg vector of vecs into single vector
-    // glBufferData on that vectors.data
+    auto countSize =
+      [&size](auto& vec){
+
+        for (auto& elt : vec) {
+          typedef typename std::decay<decltype(elt)>::type::value_type vtype;
+          size += sizeof(vtype) * elt.length();
+        }
+      };
+
+    forTuple(vecs, countSize);
+    glNamedBufferData(VBO, size, NULL, GL_DYNAMIC_DRAW);
     
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    bufferTupleVectors(vecs, VBO);
   }
 
+  void draw() {
+
+    glBindVertexArray(VAO);
+    
+    sf::Shader::bind(&shader);
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    
+  }
+  
 };
 
 #endif // TYPED_BATCH_HPP

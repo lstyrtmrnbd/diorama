@@ -36,38 +36,53 @@ void forVec(Vec v, FuncT f) {
   }
 }
 
-// Flattens a tuple of vectors of vecs into a vector of T
-// All vectors in the tuple must be at least as long as the first
-/**
-template <typename T, typename... Tvs>
-vector<T> flattenTupVectVec(tuple<Tvs...>& tup) {
+// Buffers a glm::vec into bound GL_ARRAY_BUFFER,
+// returns size of buffered data so it can be added to offset
+template <typename Vec>
+size_t bufferVec(const Vec& v, size_t offset) {
 
-  vector<T> ret;
+  typedef typename Vec::value_type vtype;
+  
+  vector<vtype> data;
 
-  auto tupLength = std::tuple_size<tup>::value;
-  auto firstLength = std::get<0>(tup).size();
+  auto fillData =
+    [&data](const auto& vi){
 
-  auto unpackVecs =
-    [&ret](auto veci) {
-
-      ret.push_back(veci);
+      data.push_back(vi);
     };
 
-  auto unpackAtI =
-    [&tup](auto i){
+  forVec(v, fillData);
 
-      auto perColumn =
-        [i](const auto& vect){
+  size_t size = sizeof(vtype) * data.size();
+  
+  glBufferSubData(GL_ARRAY_BUFFER, offset, size, (GLvoid*)data.data());
 
-          forVec(vect[i], unpackVecs); 
-        };
-      
-      forTuple(tup, perColumn);
+  return size;
+}
+
+// Proceed up the first vector in the tuple, buffering a vec
+//  per tuple member vector each step
+template <typename... Tvs>
+void bufferTupleVectors(tuple<Tvs...>& tup, GLuint buffer) {
+
+  glBindBuffer(GL_ARRAY_BUFFER, buffer);
+  
+  size_t offset = 0;
+  size_t i = 0;
+
+  auto perVector =
+    [&offset, &i](auto& vect){
+
+      offset += bufferVec(vect[i], offset);
     };
   
-  for (auto i = 0; i < firstLength; ++i) unpackAtI(i);
+  auto& firstVector = std::get<0>(tup);
+  for (; i < firstVector.size(); ++i) {
 
-  return ret;
+    forTuple(tup, perVector);
+  }
+
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
-*/
+
 #endif//FOR_HPP

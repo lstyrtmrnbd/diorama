@@ -20,6 +20,7 @@ struct Attribute {
     
 };
 
+// gives appropriate glm::vec type to hold attribute components
 template <typename Ta>
 struct vecType {
 

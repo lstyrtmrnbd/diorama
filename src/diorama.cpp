@@ -68,9 +68,13 @@ int main() {
   Attribute<GLfloat, 3> position {"position", false};
   Attribute<GLfloat, 2> texCoord {"texCoords", true};
 
+  /**
   Batch<Attribute<GLfloat, 3>,
-        Attribute<GLfloat, 2>> batch {"src/default.vert", "src/default.frag",
+        Attribute<GLfloat, 2>> batch {"src/simple.vert", "src/simple.frag",
                                       position, texCoord};
+  */
+  auto batch = std::make_unique<Batch<Attribute<GLfloat, 3>,
+                                      Attribute<GLfloat, 2>>>("src/simple.vert", "src/simple.frag", position, texCoord);
   
   vector<vec3> vverts = {{-1.0f, 1.0f, 0.0f },
                          {-1.0f,-1.0f, 0.0f },
@@ -88,7 +92,7 @@ int main() {
                         { 1.0f, 1.0f },
                         { 0.0f, 1.0f }};
   
-  batch.addModel(vverts, vtexs);
+  batch->addModel(vverts, vtexs);
   
   /// SHADER
   const string vertFile = "src/default.vert";
@@ -105,6 +109,7 @@ int main() {
   GLint positionLoc = glGetAttribLocation(shaderHandle, "position");
   GLint texCoordLoc = glGetAttribLocation(shaderHandle, "texCoord");
 
+  /**
   /// ATTRIBUTES
   GLuint vao;
   glGenVertexArrays(1, &vao);
@@ -140,7 +145,7 @@ int main() {
   GLuint modelLoc = glGetUniformLocation(shaderHandle, "model");
   GLuint viewLoc = glGetUniformLocation(shaderHandle, "view");
   GLuint projectionLoc = glGetUniformLocation(shaderHandle, "projection");
-  
+  */
   /// LOOP
   bool running = true;
   while (running) {
@@ -166,6 +171,7 @@ int main() {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    /**
     sf::Shader::bind(&defaultShader);
 
     glActiveTexture(GL_TEXTURE0);
@@ -177,7 +183,10 @@ int main() {
     glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &projection[0][0]);
     
     glDrawArrays(GL_TRIANGLES, 0 , 6);
-  
+    */
+
+    batch->draw();
+    
     window.display(); // end the current frame (internally swaps the front and back buffers)
   }
 
