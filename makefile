@@ -14,4 +14,4 @@ else
 endif
 
 all:
-	$(CXX) $(FLAGS) $(SUPPRESS) -o diorama.bin src/diorama.cpp $(LINK) $(WINLINK) 
+	$(CXX) $(FLAGS) $(SUPPRESS) -o diorama.bin src/diorama.cpp $(LINK)
