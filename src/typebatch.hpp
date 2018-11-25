@@ -12,8 +12,9 @@
 #include <GL/glew.h>
 
 #include "attribute.hpp"
-#include "utility.hpp"
 #include "gltypes.hpp"
+#include "model.hpp"
+#include "utility.hpp"
 
 /**
  * The important calls are: 
@@ -36,14 +37,8 @@ class Batch {
 private:
     
   tuple<Attrs...> attributes;
-  GLuint VAO,VBO, shaderHandle;
+  GLuint VAO, VBO, shaderHandle;
   Shader shader;
-
-  template <typename FuncT>
-  void forAttr(FuncT func) {
-    
-    forTuple(attributes, func);
-  }
 
 public:
 
@@ -73,7 +68,7 @@ public:
         stride += attr.size * sizeof(aType);
       };
 
-    forAttr(countStride);
+    forTuple(attributes, countStride);
 
     unsigned long offset = 0;
 
@@ -89,26 +84,35 @@ public:
                               attr.normalized, stride, (GLvoid*)offset);
         
         offset += attr.size * sizeof(aType);
- 
       };
 
-    forAttr(vertexAttribPointer);
+    forTuple(attributes, vertexAttribPointer);
 
     // clear GL state bindings
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
   }
 
-  // vector<glm::vecX>& per attribute
+  // vector<glm::vecX> const& per attribute
   // need to save and supply offset
   void addModel(vector<typename vecType<Attrs>::type> const&... args) {
 
     auto vecs = std::make_tuple(args...);
 
+    addModel(vecs);
+  }
+
+  void addModel(Model<Attrs...>& model) {
+
+    addModel(model.getVertices());
+  }
+
+  void addModel(tuple<vector<typename vecType<Attrs>::type>...>& vecs) {
+
     size_t size = 0;
     
     auto countSize =
-      [&size](auto& vec){
+      [&size](auto& vec) {
 
         for (auto& elt : vec) {
           typedef typename std::decay<decltype(elt)>::type::value_type vtype;
@@ -121,15 +125,14 @@ public:
     
     bufferTupleVectors(vecs, VBO);
   }
-
+  
   void draw() {
 
     glBindVertexArray(VAO);
     
     sf::Shader::bind(&shader);
 
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    
+    glDrawArrays(GL_TRIANGLES, 0, 6);    
   }
   
 };
