@@ -36,8 +36,10 @@ void forVec(Vec v, FuncT f) {
   }
 }
 
-// Buffers a glm::vec into bound GL_ARRAY_BUFFER,
-// returns size of buffered data so it can be added to offset
+/**
+ * Buffers a glm::vec into bound GL_ARRAY_BUFFER,
+ * returns size of buffered data so it can be added to offset
+ */
 template <typename Vec>
 size_t bufferVec(const Vec& v, size_t offset) {
 
@@ -60,8 +62,10 @@ size_t bufferVec(const Vec& v, size_t offset) {
   return size;
 }
 
-// Proceed up the first vector in the tuple, buffering a vec
-//  per tuple member vector each step
+/**
+ * Proceed up the first vector in the tuple, buffering a vec
+ * per tuple member vector each step
+ */
 template <typename... Tvs>
 void bufferTupleVectors(tuple<Tvs...>& tup, GLuint buffer) {
 

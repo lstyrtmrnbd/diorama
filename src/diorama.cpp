@@ -91,8 +91,11 @@ int main() {
                         { 1.0f, 0.0f },
                         { 1.0f, 1.0f },
                         { 0.0f, 1.0f }};
+
+  Model<Attribute<GLfloat, 3>,
+        Attribute<GLfloat, 2>> square {vverts, vtexs};
   
-  batch->addModel(vverts, vtexs);
+  batch->addModel(square);
   
   /// SHADER
   const string vertFile = "src/default.vert";

@@ -5,6 +5,7 @@
 #include <string>
 #include <tuple>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 #include <SFML/Graphics.hpp>
@@ -24,9 +25,9 @@
  */
 
 /**
- * Elements are interleaved in VBO
- * Benchmark later: make batch parent or interface,
- *   give interleaved and non-interleaved implementations 
+ * Implementation options:
+ * - Elements are interleaved in VBO
+ * - VBO is STATIC and reconstructed per draw
  */
 
 using std::tuple, std::string, std::vector, sf::Shader;
@@ -39,6 +40,10 @@ private:
   tuple<Attrs...> attributes;
   GLuint VAO, VBO, shaderHandle;
   Shader shader;
+
+  vector<Model<Attrs...>> models;
+  long vertCount;
+  size_t vertSize;
 
 public:
 
@@ -93,46 +98,35 @@ public:
     glBindVertexArray(0);
   }
 
-  // vector<glm::vecX> const& per attribute
-  // need to save and supply offset
-  void addModel(vector<typename vecType<Attrs>::type> const&... args) {
-
-    auto vecs = std::make_tuple(args...);
-
-    addModel(vecs);
-  }
 
   void addModel(Model<Attrs...>& model) {
 
-    addModel(model.getVertices());
+    vertCount += model.getVertCount();
+
+    vertSize += model.getVertSize();
+    
+    models.push_back(std::move(model));
   }
+  
+  void pushModels() {
 
-  void addModel(tuple<vector<typename vecType<Attrs>::type>...>& vecs) {
+    glNamedBufferData(VBO, vertSize, NULL, GL_STATIC_DRAW);
 
-    size_t size = 0;
-    
-    auto countSize =
-      [&size](auto& vec) {
+    for (auto& model : models) {
 
-        for (auto& elt : vec) {
-          typedef typename std::decay<decltype(elt)>::type::value_type vtype;
-          size += sizeof(vtype) * elt.length();
-        }
-      };
-
-    forTuple(vecs, countSize);
-    glNamedBufferData(VBO, size, NULL, GL_DYNAMIC_DRAW);
-    
-    bufferTupleVectors(vecs, VBO);
+      bufferTupleVectors(model.getVertices(), VBO);
+    }
   }
   
   void draw() {
 
     glBindVertexArray(VAO);
     
+    pushModels();
+    
     sf::Shader::bind(&shader);
 
-    glDrawArrays(GL_TRIANGLES, 0, 6);    
+    glDrawArrays(GL_TRIANGLES, 0, vertCount);    
   }
   
 };
