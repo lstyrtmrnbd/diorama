@@ -95,9 +95,18 @@ int main() {
   Model<Attribute<GLfloat, 3>,
         Attribute<GLfloat, 2>> square {vverts, vtexs};
 
-  square.scale(vec3(0.5f,0.5f,1.0f));
-  
+  square.scale(vec3(0.25f,0.25f,1.0f));
+  square.translate(vec3(-0.5f,0.0f,0.0f));
+
   batch->addModel(square);
+
+  Model<Attribute<GLfloat, 3>,
+        Attribute<GLfloat, 2>> square2 {vverts, vtexs};
+
+  square2.scale(vec3(0.25f,0.25f,1.0f));
+  square2.translate(vec3(0.5f,0.0f,0.0f));
+
+  batch->addModel(square2);
   
   /**
   /// TEXTURE
@@ -109,14 +118,6 @@ int main() {
 
   GLuint texHandle = defaultTexture.getNativeHandle();
 
-  /// MATRICES
-  mat4 translation(1.0f);
-  mat4 rotation(1.0f);
-  mat4 scale = glm::scale(mat4(1.0f), vec3(0.5f,0.5f,0.5f));
-
-  mat4 model = translation * rotation * scale;
-  mat4 view(1.0f);
-  mat4 projection(1.0f);
 
   GLuint modelLoc = glGetUniformLocation(shaderHandle, "model");
   GLuint viewLoc = glGetUniformLocation(shaderHandle, "view");

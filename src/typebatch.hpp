@@ -107,14 +107,17 @@ public:
     
     models.push_back(std::move(model));
   }
-  
+
+  //offsetting
   void bufferModels() {
 
     glNamedBufferData(VBO, vertSize, NULL, GL_STATIC_DRAW);
 
+    size_t offset = 0;
+    
     for (auto& model : models) {
       auto worldVerts = model.getWorldVertices();
-      bufferTupleVectors(worldVerts, VBO);
+      offset += bufferTupleVectors(worldVerts, VBO, offset);
     }
   }
   

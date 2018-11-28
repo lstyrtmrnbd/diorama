@@ -67,11 +67,10 @@ size_t bufferVec(const Vec& v, size_t offset) {
  * per tuple member vector each step
  */
 template <typename... Tvs>
-void bufferTupleVectors(tuple<Tvs...>& tup, GLuint buffer) {
+size_t bufferTupleVectors(tuple<Tvs...>& tup, GLuint buffer, size_t offset) {
 
   glBindBuffer(GL_ARRAY_BUFFER, buffer);
   
-  size_t offset = 0;
   size_t i = 0;
 
   auto perVector =
@@ -87,6 +86,8 @@ void bufferTupleVectors(tuple<Tvs...>& tup, GLuint buffer) {
   }
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+  return offset;
 }
 
 #endif//FOR_HPP
