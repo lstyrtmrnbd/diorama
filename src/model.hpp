@@ -30,7 +30,7 @@ public:
 
   Model(vector<typename vecType<Attrs>::type>... args)
     : vertices{args...}, vertCount{static_cast<long>(get<0>(vertices).size())},
-      translation{}, rotation{}, scalation{}
+      translation{1.0f}, rotation{1.0f}, scalation{1.0f}
   {}
 
   vertTuple & getVertices() { return vertices; }
@@ -40,16 +40,16 @@ public:
     mat4 trs = translation * rotation * scalation;
     
     vertTuple worldVerts = vertices;
-    /**
+    
     for (auto& vec : get<0>(worldVerts)) {
 
-      vec4 temp = {vec, 1.0};
-      temp = temp * trs;
+      vec4 temp(vec, 1.0);
+      temp = trs * temp;
       vec.x = temp.x;
       vec.y = temp.y;
       vec.z = temp.z;
     }
-    */
+
     return worldVerts;
   }
 
@@ -75,17 +75,17 @@ public:
 
   void translate(vec3 offset) {
 
-    translation = glm::translate(mat4(), offset) * translation;
+    translation = glm::translate(mat4(1.0f), offset) * translation;
   }
 
   void scale(vec3 scalars) {
 
-    scalation = glm::scale(mat4(), scalars) * scalation;
+    scalation = glm::scale(mat4(1.0f), scalars) * scalation;
   }
 
   void rotate(float angle, vec3 axis) {
 
-    rotation = glm::rotate(mat4(), angle, axis) * rotation;
+    rotation = glm::rotate(mat4(1.0f), angle, axis) * rotation;
   }
 
 };

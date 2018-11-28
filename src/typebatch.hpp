@@ -41,13 +41,11 @@ private:
   GLuint VAO, VBO, shaderHandle;
   Shader shader;
 
-  //vector<Model<Attrs...>> models;
+  vector<Model<Attrs...>> models;
   long vertCount;
   size_t vertSize;
 
 public:
-
-  vector<Model<Attrs...>> models; // public for testing purposes
   
   Batch(string vertFilename, string fragFilename, Attrs... args)
     : attributes{args...}, shader() {

@@ -94,10 +94,10 @@ int main() {
 
   Model<Attribute<GLfloat, 3>,
         Attribute<GLfloat, 2>> square {vverts, vtexs};
+
+  square.scale(vec3(0.5f,0.5f,1.0f));
   
   batch->addModel(square);
-
-  //(batch->models)[0].scale(vec3(0.5f, 0.5f, 1.0f));
   
   /**
   /// TEXTURE
