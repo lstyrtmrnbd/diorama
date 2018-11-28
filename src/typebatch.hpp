@@ -18,17 +18,17 @@
 #include "utility.hpp"
 
 /**
- * The important calls are: 
- * - glVertexAttribPointer(location, size, typeEnum, stride, offset)
- * - glBufferData(GL_ARRAY_BUFFER, sizeof, data, GL_DYNAMIC_DRAW) 
- * - glBufferSubData(GL_ARRAY_BUFFER, offset, size, const GLvoid * data)
- */
+  The important calls are: 
+  - glVertexAttribPointer(location, size, typeEnum, stride, offset)
+  - glBufferData(GL_ARRAY_BUFFER, sizeof, data, GL_DYNAMIC_DRAW) 
+  - glBufferSubData(GL_ARRAY_BUFFER, offset, size, const GLvoid * data)
+*/
 
 /**
- * Implementation options:
- * - Elements are interleaved in VBO
- * - VBO is STATIC and reconstructed per draw
- */
+  Implementation decisions:
+  - Elements are interleaved in VBO
+  - VBO is STATIC and reconstructed per draw
+*/
 
 using std::tuple, std::string, std::vector, sf::Shader;
 
@@ -41,12 +41,14 @@ private:
   GLuint VAO, VBO, shaderHandle;
   Shader shader;
 
-  vector<Model<Attrs...>> models;
+  //vector<Model<Attrs...>> models;
   long vertCount;
   size_t vertSize;
 
 public:
 
+  vector<Model<Attrs...>> models; // public for testing purposes
+  
   Batch(string vertFilename, string fragFilename, Attrs... args)
     : attributes{args...}, shader() {
 
@@ -108,13 +110,13 @@ public:
     models.push_back(std::move(model));
   }
   
-  void pushModels() {
+  void bufferModels() {
 
     glNamedBufferData(VBO, vertSize, NULL, GL_STATIC_DRAW);
 
     for (auto& model : models) {
-
-      bufferTupleVectors(model.getVertices(), VBO);
+      auto worldVerts = model.getWorldVertices();
+      bufferTupleVectors(worldVerts, VBO);
     }
   }
   
@@ -122,7 +124,7 @@ public:
 
     glBindVertexArray(VAO);
     
-    pushModels();
+    bufferModels();
     
     sf::Shader::bind(&shader);
 

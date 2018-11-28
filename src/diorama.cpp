@@ -96,37 +96,10 @@ int main() {
         Attribute<GLfloat, 2>> square {vverts, vtexs};
   
   batch->addModel(square);
-  
-  /// SHADER
-  const string vertFile = "src/default.vert";
-  const string fragFile = "src/default.frag";
-  
-  sf::Shader defaultShader;
 
-  if (!defaultShader.loadFromFile(vertFile, fragFile)) {
-    std::cout << "#####Default shader failed\n";
-  }
+  //(batch->models)[0].scale(vec3(0.5f, 0.5f, 1.0f));
   
-  GLuint shaderHandle = defaultShader.getNativeHandle();
-
-  GLint positionLoc = glGetAttribLocation(shaderHandle, "position");
-  GLint texCoordLoc = glGetAttribLocation(shaderHandle, "texCoord");
-
   /**
-  /// ATTRIBUTES
-  GLuint vao;
-  glGenVertexArrays(1, &vao);
-  glBindVertexArray(vao);
-  
-  glEnableVertexAttribArray(positionLoc);
-  glEnableVertexAttribArray(texCoordLoc);
-    
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
-  glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
-  
-  glBindBuffer(GL_ARRAY_BUFFER, texCoordBuffer);
-  glVertexAttribPointer(texCoordLoc, 2, GL_FLOAT, GL_TRUE, 0, 0);
-  
   /// TEXTURE
   sf::Image defaultImage;
   defaultImage.loadFromFile("poster0.jpg");
@@ -175,8 +148,6 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     /**
-    sf::Shader::bind(&defaultShader);
-
     glActiveTexture(GL_TEXTURE0);
     sf::Texture::bind(&defaultTexture);
 
@@ -184,13 +155,12 @@ int main() {
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &model[0][0]);
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
     glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &projection[0][0]);
-    
-    glDrawArrays(GL_TRIANGLES, 0 , 6);
     */
 
     batch->draw();
     
-    window.display(); // end the current frame (internally swaps the front and back buffers)
+    // end the current frame (internally swaps the front and back buffers)
+    window.display();
   }
 
   // release resources...
