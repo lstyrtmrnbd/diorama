@@ -12,7 +12,10 @@ using std::string;
 template <typename T, int N>
 struct Attribute {
 
-  Attribute(string handle, bool normal) : name(handle), normalized(normal) {};
+  Attribute(string handle, bool normal)
+    : name(handle), normalized(normal)
+  {}
+  
   string name;
   static const int size = N;
   typedef T type;

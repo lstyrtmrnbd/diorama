@@ -12,7 +12,8 @@
 #include "attribute.hpp"
 #include "utility.hpp"
 
-using std::tuple, std::vector, std::get, glm::vec3, glm::vec4, glm::mat4;
+using std::tuple, std::vector, std::get;
+using glm::vec3, glm::vec4, glm::mat4;
 
 template <typename... Attrs>
 class Model {
