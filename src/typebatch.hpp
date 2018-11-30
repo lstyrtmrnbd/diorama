@@ -2,6 +2,7 @@
 #define TYPED_BATCH_HPP
 
 #include <iostream>
+#include <memory>
 #include <string>
 #include <tuple>
 #include <type_traits>
@@ -13,6 +14,7 @@
 #include <GL/glew.h>
 
 #include "attribute.hpp"
+#include "camera.hpp"
 #include "gltypes.hpp"
 #include "model.hpp"
 #include "utility.hpp"
@@ -30,7 +32,7 @@
   - VBO is STATIC and reconstructed per draw
 */
 
-using std::tuple, std::string, std::vector, sf::Shader;
+using std::tuple, std::string, std::vector, std::shared_ptr, sf::Shader;
 
 template <typename... Attrs>
 class Batch {
@@ -45,10 +47,12 @@ private:
   long vertCount;
   size_t vertSize;
 
+  shared_ptr<Camera> camera;
+
 public:
   
   Batch(string vertFilename, string fragFilename, Attrs... args)
-    : attributes{args...}, shader() {
+    : attributes{args...}, shader{}, camera{nullptr} {
 
     if (!shader.loadFromFile(vertFilename, fragFilename)) {
       std::cout << "Batch failed to load shader " << vertFilename

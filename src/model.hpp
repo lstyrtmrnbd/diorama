@@ -10,6 +10,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "attribute.hpp"
+#include "camera.hpp"
 #include "utility.hpp"
 
 using std::tuple, std::vector, std::get;

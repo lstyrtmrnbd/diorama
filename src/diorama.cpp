@@ -22,7 +22,7 @@ int main() {
 
   window.setActive(true);
 
-  // load resources, initialize the OpenGL states...
+  //GL prep
 
   glewInit();
 
