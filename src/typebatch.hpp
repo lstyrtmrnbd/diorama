@@ -124,6 +124,11 @@ public:
       offset += bufferTupleVectors(worldVerts, VBO, offset);
     }
   }
+
+  void setCamera(Camera & newCamera) {
+
+    camera = std::make_shared<Camera>(newCamera);
+  }
   
   void draw() {
 
@@ -132,6 +137,12 @@ public:
     bufferModels();
     
     sf::Shader::bind(&shader);
+
+    if (camera != nullptr) {
+
+      GLuint viewProjection = glGetUniformLocation(shaderHandle, "viewProjection");
+      glUniformMatrix4fv(viewProjection, 1, GL_FALSE, &camera->getVP()[0][0]);
+    }
 
     glDrawArrays(GL_TRIANGLES, 0, vertCount);    
   }

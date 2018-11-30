@@ -69,6 +69,10 @@ int main() {
   square2.translate(vec3(0.5f,0.0f,0.0f));
 
   batch->addModel(square2);
+
+  Camera defaultCamera {};
+
+  batch->setCamera(defaultCamera);
   
   /**
   /// TEXTURE

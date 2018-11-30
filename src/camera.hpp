@@ -26,8 +26,8 @@ public:
   void setOrthographic(float left, float right, float bottom,
                        float top, float zNear, float zFar);
   
-  mat4 getView() const { return view; }
-  mat4 getProjection() const { return projection; }
+  mat4 const & getView() const { return view; }
+  mat4 const & getProjection() const { return projection; }
   mat4 getVP() const { return projection * view; }
   
 };
