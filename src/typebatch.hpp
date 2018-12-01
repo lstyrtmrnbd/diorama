@@ -125,9 +125,14 @@ public:
     }
   }
 
-  void setCamera(Camera & newCamera) {
+  void setCamera(Camera * newCamera) {
 
-    camera = std::make_shared<Camera>(newCamera);
+    camera = shared_ptr<Camera>(newCamera);
+  }
+
+  shared_ptr<Camera> getCamera() {
+
+    return camera;
   }
   
   void draw() {
@@ -142,6 +147,9 @@ public:
 
       GLuint viewProjection = glGetUniformLocation(shaderHandle, "viewProjection");
       glUniformMatrix4fv(viewProjection, 1, GL_FALSE, &camera->getVP()[0][0]);
+    } else {
+
+      std::cout << "No camera available in batch" << std::endl;
     }
 
     glDrawArrays(GL_TRIANGLES, 0, vertCount);    

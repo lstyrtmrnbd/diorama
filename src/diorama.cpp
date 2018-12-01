@@ -1,3 +1,4 @@
+#include <cmath>
 #include <iostream>
 #include <vector>
 
@@ -70,8 +71,7 @@ int main() {
 
   batch->addModel(square2);
 
-  Camera defaultCamera {};
-
+  Camera* defaultCamera = new Camera{};
   batch->setCamera(defaultCamera);
   
   /**
@@ -83,13 +83,15 @@ int main() {
   defaultTexture.loadFromImage(defaultImage);
 
   GLuint texHandle = defaultTexture.getNativeHandle();
-
-
-  GLuint modelLoc = glGetUniformLocation(shaderHandle, "model");
-  GLuint viewLoc = glGetUniformLocation(shaderHandle, "view");
-  GLuint projectionLoc = glGetUniformLocation(shaderHandle, "projection");
   */
+  
   /// LOOP
+  sf::Clock clock;
+
+  const sf::Time dt = sf::milliseconds(100);
+
+  sf::Time t, accumulator, frameTime;
+  
   bool running = true;
   while (running) {
     
@@ -112,6 +114,23 @@ int main() {
       }
     }
 
+    frameTime = clock.restart();
+
+    accumulator += frameTime;
+
+    while (accumulator >= dt) {
+
+      //do physics here
+      float movespeed = 0.01f;
+      float xPos = static_cast<float>(sin(t.asMilliseconds()));
+      float zPos = static_cast<float>(cos(t.asMilliseconds()));
+      defaultCamera->move(vec3(zPos,0.0f,0.0f));
+      defaultCamera->lookAt(vec3(0.0f,0.0f,0.0f));
+
+      accumulator -= dt;
+      t += dt;
+    }
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     /**
@@ -119,9 +138,6 @@ int main() {
     sf::Texture::bind(&defaultTexture);
 
     defaultShader.setUniform("texture0", defaultTexture);
-    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &model[0][0]);
-    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
-    glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &projection[0][0]);
     */
 
     batch->draw();
