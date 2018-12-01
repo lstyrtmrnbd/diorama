@@ -18,17 +18,18 @@ private:
 public:
 
   Camera();
-
-  void move(vec3 position);
+  
   void lookAt(vec3 target);
+  void move(vec3 offset);
+  void setPosition(vec3 newPosition);
   
   void setPerspective(float fov, float aspect, float nearClip, float farClip);
   void setOrthographic(float left, float right, float bottom,
                        float top, float zNear, float zFar);
   
-  mat4 const & getView() const { return view; }
+  mat4 getView() const;
   mat4 const & getProjection() const { return projection; }
-  mat4 getVP() const { return projection * view; }
+  mat4 getVP() const;
   
 };
 
