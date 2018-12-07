@@ -15,13 +15,13 @@ void Camera::move(vec3 offset) {
 
 void Camera::setPosition(vec3 newPosition) {
 
+  target = newPosition + (target - position);
   position = newPosition;
-  target += newPosition;
 }
 
 void Camera::lookAt(vec3 target) {
 
-  target = target;
+  this->target = target;
 }
 
 void Camera::setPerspective(float fov, float aspect, float nearClip, float farClip) {
