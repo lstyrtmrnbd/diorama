@@ -88,10 +88,10 @@ int main() {
   /// LOOP
   sf::Clock clock;
 
-  const sf::Time dt = sf::milliseconds(100);
+  const sf::Time dt = sf::milliseconds(16);
 
   sf::Time t, accumulator, frameTime;
-  
+
   bool running = true;
   while (running) {
     
@@ -110,23 +110,31 @@ int main() {
       }
       else if (event.type == sf::Event::Resized) {
           
-        glViewport(0, 0, event.size.width, event.size.height); // adjust the viewport when the window is resized
+        glViewport(0, 0, event.size.width, event.size.height);
       }
     }
 
     frameTime = clock.restart();
 
     accumulator += frameTime;
-
+    
     while (accumulator >= dt) {
 
       //do physics here
-      float movespeed = 0.01f;
-      float xPos = static_cast<float>(sin(t.asMilliseconds()));
-      float zPos = static_cast<float>(cos(t.asMilliseconds()));
-      defaultCamera->move(vec3(zPos,0.0f,0.0f));
+      float movespeed = 0.1f;
+      double cos_t_ms = cos(t.asMilliseconds()) * movespeed;
+      
+      float xPos = static_cast<float>(cos_t_ms);
+
+      std::cout << defaultCamera->getPosition().x << " pos + "
+                << xPos << " off = "
+                << std::endl;
+
+      //defaultCamera->setPosition(vec3(xPos,0.0f,0.0f));
+      defaultCamera->move(vec3(xPos,0.0f,0.0f));
       defaultCamera->lookAt(vec3(0.0f,0.0f,0.0f));
 
+      
       accumulator -= dt;
       t += dt;
     }

@@ -32,7 +32,7 @@
   - VBO is STATIC and reconstructed per draw
 */
 
-using std::tuple, std::string, std::vector, std::shared_ptr, sf::Shader;
+using std::tuple, std::string, std::vector, std::shared_ptr, sf::Shader, sf::Texture;
 
 template <typename... Attrs>
 class Batch {
@@ -47,6 +47,8 @@ private:
   long vertCount;
   size_t vertSize;
 
+  vector<Texture> textures;
+  
   shared_ptr<Camera> camera;
 
 public:

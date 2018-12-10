@@ -20,6 +20,7 @@ public:
   Camera();
   
   void lookAt(vec3 target);
+
   void move(vec3 offset);
   void setPosition(vec3 newPosition);
   
@@ -30,7 +31,10 @@ public:
   mat4 getView() const;
   mat4 const & getProjection() const { return projection; }
   mat4 getVP() const;
-  
+
+  vec3 getPosition() const { return position; }
+  vec3 getTarget() const { return target; }
+  vec3 getUp() const { return up; }
 };
 
 #endif//CAMERA_HPP
