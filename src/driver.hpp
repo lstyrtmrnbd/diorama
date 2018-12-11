@@ -3,11 +3,13 @@
 
 #include <vector>
 
-#include <SFML/System.hpp>
+#include <SFML/System/Time.hpp>
+
+#include "entity.hpp"
+
+using sf::Time, std::vector;
 
 class Driver {
-
-  using sf::Time, std::vector;
 
 private:
   
@@ -33,6 +35,8 @@ public:
       total += dt;
     }
   }
+
+  void addEntity(Entity* ent) { entities.push_back(ent); }
 };
 
 #endif//DRIVER_HPP

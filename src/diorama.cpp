@@ -10,6 +10,7 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 
+#include "driver.hpp"
 #include "typebatch.hpp"
 
 using glm::vec2, glm::vec3;
@@ -90,6 +91,8 @@ int main() {
 
   const sf::Time dt = sf::milliseconds(16);
 
+  Driver physics{sf::milliseconds(10)};
+
   sf::Time t, accumulator, frameTime;
 
   bool running = true;
@@ -122,22 +125,21 @@ int main() {
 
       //do physics here
       float movespeed = 0.1f;
-      double cos_t_ms = cos(t.asMilliseconds()) * movespeed;
+      double cos_t_ms = sin(t.asMilliseconds() * 0.001f);
       
       float xPos = static_cast<float>(cos_t_ms);
 
-      std::cout << defaultCamera->getPosition().x << " pos + "
-                << xPos << " off = "
-                << std::endl;
-
-      //defaultCamera->setPosition(vec3(xPos,0.0f,0.0f));
-      defaultCamera->move(vec3(xPos,0.0f,0.0f));
+      defaultCamera->setPosition(vec3(xPos,0.0f,-1.0f));
+      //defaultCamera->move(vec3(xPos,0.0f,0.0f));
       defaultCamera->lookAt(vec3(0.0f,0.0f,0.0f));
 
+      //std::cout << defaultCamera->getPosition().x << " ";
       
       accumulator -= dt;
       t += dt;
     }
+
+    //std::cout << " draw " << std::endl;
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

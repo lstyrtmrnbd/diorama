@@ -22,7 +22,7 @@ private:
   
 public:
 
-  Entity(vec3 pos, vec3 movef) : position{pos}, movefun{movef}
+  Entity(vec3 pos) : position{pos}
   {}
 
   void move(vec3 offset) { position += offset; }
@@ -33,7 +33,9 @@ public:
   void setDirection(vec3 direction) { this->direction = direction; }
   vec3 getDirection() const { return direction; }
 
-  void update(Time step, Time total) { position = movefun(step, total); }
+  void setMovementFunc(function<vec3(vec3, Time, Time)> fun) { movefun = fun; }
+
+  void update(Time step, Time total) { position = movefun(this->position, step, total); }
   
 };
 
