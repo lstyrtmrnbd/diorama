@@ -93,6 +93,17 @@ int main() {
 
   Driver physics{sf::milliseconds(10)};
 
+  physics.addEntity(defaultCamera);
+
+  auto camMove = [](vec3 pos, Time dt, Time t) {
+                   
+                   double st = sin(t.asMilliseconds() * 0.001f);
+                   float x = static_cast<float>(st);
+                   return vec3(x, pos.y, pos.z);
+                 };
+  
+  defaultCamera->setMovementFunc(camMove);
+  
   sf::Time t, accumulator, frameTime;
 
   bool running = true;
@@ -120,27 +131,11 @@ int main() {
     frameTime = clock.restart();
 
     accumulator += frameTime;
+
+    physics.simulatePeriod(accumulator, t);
+
+    //DRAW
     
-    while (accumulator >= dt) {
-
-      //do physics here
-      float movespeed = 0.1f;
-      double cos_t_ms = sin(t.asMilliseconds() * 0.001f);
-      
-      float xPos = static_cast<float>(cos_t_ms);
-
-      defaultCamera->setPosition(vec3(xPos,0.0f,-1.0f));
-      //defaultCamera->move(vec3(xPos,0.0f,0.0f));
-      defaultCamera->lookAt(vec3(0.0f,0.0f,0.0f));
-
-      //std::cout << defaultCamera->getPosition().x << " ";
-      
-      accumulator -= dt;
-      t += dt;
-    }
-
-    //std::cout << " draw " << std::endl;
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     /**

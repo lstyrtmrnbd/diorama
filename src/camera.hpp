@@ -5,15 +5,19 @@
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "entity.hpp"
+
 using glm::vec3, glm::mat4;
 
-class Camera {
+class Camera : public Entity {
   
 private:
 
   mat4 view, projection;
 
-  vec3 position, target, up;
+  //vec3 position, target, up;
+
+  vec3 target, up;
 
 public:
 
@@ -22,7 +26,6 @@ public:
   void lookAt(vec3 target);
 
   void move(vec3 offset);
-  void setPosition(vec3 newPosition);
   
   void setPerspective(float fov, float aspect, float nearClip, float farClip);
   void setOrthographic(float left, float right, float bottom,

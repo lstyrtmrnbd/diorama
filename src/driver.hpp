@@ -22,13 +22,13 @@ public:
   Driver(Time timestep) : dt{timestep}, entities{}
   {}
   
-  void simulatePeriod(vector<Entity>& entities, Time& period, Time& total) {
+  void simulatePeriod(Time& period, Time& total) {
 
     while (period >= dt) {
 
-      for (auto& entity : entities) {
+      for (auto entity : entities) {
 
-        entity.update(dt, total);
+        entity->update(dt, total);
       }
       
       period -= dt;

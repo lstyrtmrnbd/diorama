@@ -1,6 +1,6 @@
 #include "camera.hpp"
 
-Camera::Camera(): view{1.0f}, projection{1.0f}, position{0.0f,0.0f,-1.0f},
+Camera::Camera(): Entity{vec3(0.0f,0.0f,-1.0f)}, view{1.0f}, projection{1.0f},
     target{0.0f,0.0f,0.0f}, up{0.0f,1.0f,0.0f} {
 
   setPerspective(90.0f, 4.0f / 3.0f, 0.1f, 100.0f);
@@ -10,12 +10,6 @@ void Camera::move(vec3 offset) {
 
   position += offset;
   target += offset;
-}
-
-void Camera::setPosition(vec3 position) {
-
-  //target = newPosition + (target - position);
-  this->position = position;
 }
 
 void Camera::lookAt(vec3 target) {

@@ -11,7 +11,7 @@ using std::function, sf::Time, glm::vec3;
 
 class Entity {
 
-private:
+protected:
 
   double speed;
   
